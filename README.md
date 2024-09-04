@@ -1,13 +1,13 @@
-Voici la version enrichie de votre README, intégrant la documentation pour la gestion des albums et des photos, tout en conservant les informations initiales sur l'API Users :
+---
+
+# API Documentation
+
+## Overview
+This API provides endpoints for managing users, albums, and photos using Express.js and Mongoose. It follows a RESTful architecture to allow CRUD (Create, Read, Update, Delete) operations on users, albums, and photos.
 
 ---
 
-# API Users
-
-## Overview
-The API allows users to retrieve all of the users of the application in microservice through a REST architecture. This API will be mainly used for registered accounts.
-
-It will also create its own users to recover data to the platform but is in no way related to the users collected via the crawling of profiles on Social Networks.
+## API Users
 
 ### [POST] Create User
 Allows the creation of a single user.
@@ -18,7 +18,7 @@ Allows the creation of a single user.
 | Who can use it ?           | Owner and users  |
 | Response formats           | application/json |
 
-* HTTP request : POST → /user/create
+* HTTP request : POST → `/user/create`
 
 #### Parameters :
 ```javascript
@@ -50,7 +50,7 @@ Show a user by ID.
 | Who can use it ?           | Owner and users  |
 | Response formats           | application/json |
 
-* HTTP request : GET → /user/show/:id
+* HTTP request : GET → `/user/show/:id`
 
 #### Parameters :
 ```javascript
@@ -72,123 +72,330 @@ Show a user by ID.
 
 ---
 
-# API Albums and Photos
-
-## Objective
-The goal of this exercise is to extend an existing REST API using Express.js and Mongoose. You will create models for `Album` and `Photo` and implement CRUD routes (Create, Read, Update, Delete) to manage these entities.
-
-## Prerequisites
-- An existing Express.js API setup.
-- Mongoose installed and connected to a MongoDB database.
-- Basic understanding of Express.js routes and Mongoose models.
-
-## Requirements
-- Node.js 16
-- npm or yarn
-- Git
-- MongoDB (please configure `config.js` for MongoDB connection)
-
-## Models
-
-### Album Model
-```javascript
-// models/album.js
-const mongoose = require('mongoose');
-
-const albumSchema = new mongoose.Schema({
-  title: { type: String, required: true },
-  description: { type: String },
-  photos: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Photo' }]
-}, {
-  collection: 'albums',
-  minimize: false,
-  versionKey: false
-}).set('toJSON', {
-  transform: (doc, ret) => {
-    ret.id = ret._id;
-    delete ret._id;
-  }
-});
-
-module.exports = albumSchema;
-```
-
-### Photo Model
-```javascript
-// models/photo.js
-const mongoose = require('mongoose');
-
-const photoSchema = new mongoose.Schema({
-  title: { type: String, required: true },
-  url: { type: String, required: true },
-  description: { type: String },
-  album: { type: mongoose.Schema.Types.ObjectId, ref: 'Album', required: true }
-}, {
-  collection: 'photos',
-  minimize: false,
-  versionKey: false
-}).set('toJSON', {
-  transform: (doc, ret) => {
-    ret.id = ret._id;
-    delete ret._id;
-  }
-});
-
-module.exports = photoSchema;
-
-```
-
-## Routes for Albums
+## API Albums
 
 ### [GET] List All Albums
 Retrieve the list of all albums.
-- **HTTP Request:** GET → /albums
+
+|                            |                  |
+|----------------------------|------------------|
+| Requires authentication ?  | No               |
+| Who can use it ?           | Owner and users  |
+| Response formats           | application/json |
+
+* HTTP request : GET → `/albums`
+
+#### Response :
+```javascript
+[
+  {
+    _id: Object_ID,
+    title: String,
+    description: String,
+    photos: [Object_ID] // Array of photo IDs
+  }
+]
+```
 
 ### [GET] Retrieve Album by ID
 Retrieve a specific album by its ID.
-- **HTTP Request:** GET → /albums/:id
+
+|                            |                  |
+|----------------------------|------------------|
+| Requires authentication ?  | No               |
+| Who can use it ?           | Owner and users  |
+| Response formats           | application/json |
+
+* HTTP request : GET → `/albums/:id`
+
+#### Parameters :
+```javascript
+{
+  id: String // Required
+}
+```
+
+#### Response :
+```javascript
+{
+  _id: Object_ID,
+  title: String,
+  description: String,
+  photos: [Object_ID] // Array of photo IDs
+}
+```
 
 ### [POST] Create a New Album
 Create a new album.
-- **HTTP Request:** POST → /albums
+
+|                            |                  |
+|----------------------------|------------------|
+| Requires authentication ?  | No               |
+| Who can use it ?           | Owner and users  |
+| Response formats           | application/json |
+
+* HTTP request : POST → `/albums`
+
+#### Parameters :
+```javascript
+{
+  'title': String, // Required
+  'description': String // Optional
+}
+```
+
+#### Response :
+```javascript
+{
+  _id: Object_ID,
+  title: String,
+  description: String,
+  photos: [] // Initially empty array
+}
+```
 
 ### [PUT] Update an Existing Album
 Update an album by its ID.
-- **HTTP Request:** PUT → /albums/:id
+
+|                            |                  |
+|----------------------------|------------------|
+| Requires authentication ?  | No               |
+| Who can use it ?           | Owner and users  |
+| Response formats           | application/json |
+
+* HTTP request : PUT → `/albums/:id`
+
+#### Parameters :
+```javascript
+{
+  'title': String, // Optional
+  'description': String // Optional
+}
+```
+
+#### Response :
+```javascript
+{
+  _id: Object_ID,
+  title: String,
+  description: String,
+  photos: [Object_ID] // Updated array of photo IDs
+}
+```
 
 ### [DELETE] Delete an Album
 Delete an album by its ID.
-- **HTTP Request:** DELETE → /albums/:id
 
-## Routes for Photos
+|                            |                  |
+|----------------------------|------------------|
+| Requires authentication ?  | No               |
+| Who can use it ?           | Owner and users  |
+| Response formats           | application/json |
+
+* HTTP request : DELETE → `/albums/:id`
+
+#### Response :
+```javascript
+{
+  _id: Object_ID,
+  title: String,
+  description: String,
+  photos: [Object_ID] // Array of photo IDs (should be empty if deleted)
+}
+```
+
+---
+
+## API Photos
 
 ### [GET] List All Photos in an Album
 Retrieve all photos within a specific album.
-- **HTTP Request:** GET → /albums/:albumId/photos
+
+|                            |                  |
+|----------------------------|------------------|
+| Requires authentication ?  | No               |
+| Who can use it ?           | Owner and users  |
+| Response formats           | application/json |
+
+* HTTP request : GET → `/albums/:albumId/photos`
+
+#### Parameters :
+```javascript
+{
+  albumId: String // Required
+}
+```
+
+#### Response :
+```javascript
+[
+  {
+    _id: Object_ID,
+    title: String,
+    url: String,
+    description: String,
+    album: Object_ID // Album ID
+  }
+]
+```
 
 ### [GET] Retrieve Photo by ID
 Retrieve a specific photo within an album by its ID.
-- **HTTP Request:** GET → /albums/:albumId/photos/:id
+
+|                            |                  |
+|----------------------------|------------------|
+| Requires authentication ?  | No               |
+| Who can use it ?           | Owner and users  |
+| Response formats           | application/json |
+
+* HTTP request : GET → `/albums/:albumId/photos/:id`
+
+#### Parameters :
+```javascript
+{
+  albumId: String, // Required
+  id: String // Required
+}
+```
+
+#### Response :
+```javascript
+{
+  _id: Object_ID,
+  title: String,
+  url: String,
+  description: String,
+  album: Object_ID // Album ID
+}
+```
 
 ### [POST] Add a New Photo to an Album
 Add a new photo to a specific album.
-- **HTTP Request:** POST → /albums/:albumId/photos
+
+|                            |                  |
+|----------------------------|------------------|
+| Requires authentication ?  | No               |
+| Who can use it ?           | Owner and users  |
+| Response formats           | application/json |
+
+* HTTP request : POST → `/albums/:albumId/photos`
+
+#### Parameters :
+```javascript
+{
+  'title': String, // Required
+  'url': String, // Required
+  'description': String // Optional
+}
+```
+
+#### Response :
+```javascript
+{
+  _id: Object_ID,
+  title: String,
+  url: String,
+  description: String,
+  album: Object_ID // Album ID
+}
+```
 
 ### [PUT] Update an Existing Photo
 Update a photo within a specific album by its ID.
-- **HTTP Request:** PUT → /albums/:albumId/photos/:id
+
+|                            |                  |
+|----------------------------|------------------|
+| Requires authentication ?  | No               |
+| Who can use it ?           | Owner and users  |
+| Response formats           | application/json |
+
+* HTTP request : PUT → `/albums/:albumId/photos/:id`
+
+#### Parameters :
+```javascript
+{
+  'title': String, // Optional
+  'url': String, // Optional
+  'description': String // Optional
+}
+```
+
+#### Response :
+```javascript
+{
+  _id: Object_ID,
+  title: String,
+  url: String,
+  description: String,
+  album: Object_ID // Album ID
+}
+```
 
 ### [DELETE] Delete a Photo from an Album
 Delete a photo from a specific album by its ID.
-- **HTTP Request:** DELETE → /albums/:albumId/photos/:id
+
+|                            |                  |
+|----------------------------|------------------|
+| Requires authentication ?  | No               |
+| Who can use it ?           | Owner and users  |
+| Response formats           | application/json |
+
+* HTTP request : DELETE → `/albums/:albumId/photos/:id`
+
+#### Response :
+```javascript
+{
+  _id: Object_ID,
+  title: String,
+  url: String,
+  description: String,
+  album: Object_ID // Album ID
+}
+```
+
+---
 
 ## Handling Relationships between Albums and Photos
 
 When creating a photo, ensure it is linked to the appropriate album by updating the album's list of photos. Similarly, when deleting a photo, remove it from the album's list of photos. Utilize Mongoose's `populate` API (version 6+) to manage these relationships effectively.
 
+### Example Using `populate`
+To retrieve an album with all its photos:
+```javascript
+// controllers/albums.js
+const AlbumModel = require('../models/album.js');
 
-## Testing Your API
-Test your API using tools like Postman or cURL to ensure all routes function correctly and that relationships between albums and photos are managed properly.
+const Albums = class Albums {
+  // Other methods...
+
+  showById() {
+    this.app.get('/albums/:id', async (req, res) => {
+      try {
+        const album = await this.AlbumModel.findById(req.params.id).populate('photos').exec();
+
+        if (!album) {
+          return res.status(404).json({ code: 404, message: 'Album not found' });
+        }
+
+        res.status(200).json(album);
+      } catch (err) {
+        console.error(`[ERROR] albums/showById -> ${err}`);
+        res.status(400).json({ code: 400, message: 'Bad request' });
+      }
+    });
+  }
+
+  // Other methods...
+};
+
+module.exports = Albums;
+```
+
+## Requirements
+* Node.js 16
+* npm or yarn
+* Git
+* MongoDB (please configure `config.js` for MongoDB connection)
 
 ## Install
 ```bash
@@ -203,5 +410,6 @@ yarn prod
 ## Development Mode
 ```bash
 yarn dev
+```
 
-
+---
