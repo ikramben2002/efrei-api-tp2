@@ -7,7 +7,7 @@ const Photos = class Photos {
    * @param {Object} connect
    * @param {Function} authenticateToken
    */
-  constructor (app, connect, authenticateToken) {
+  constructor(app, connect, authenticateToken) {
     this.app = app;
     this.PhotoModel = connect.model('Photo', PhotoModel);
     this.authenticateToken = authenticateToken;
@@ -18,7 +18,7 @@ const Photos = class Photos {
   /**
    * Delete a photo by id
    */
-  deleteById () {
+  deleteById() {
     this.app.delete('/photo/:id', /*this.authenticateToken,*/ (req, res) => {  // Comment out authenticateToken
       try {
         this.PhotoModel.findByIdAndDelete(req.params.id).then((photo) => {
@@ -43,7 +43,7 @@ const Photos = class Photos {
   /**
    * Show a photo by id
    */
-  showById () {
+  showById() {
     this.app.get('/photo/:id', /*this.authenticateToken,*/ (req, res) => {  // Comment out authenticateToken
       try {
         this.PhotoModel.findById(req.params.id).then((photo) => {
@@ -68,7 +68,7 @@ const Photos = class Photos {
   /**
    * Create a new photo
    */
-  create () {
+  create() {
     this.app.post('/photo/', /*this.authenticateToken,*/ (req, res) => {  // Comment out authenticateToken
       try {
         const photoModel = new this.PhotoModel(req.body);
@@ -92,10 +92,10 @@ const Photos = class Photos {
   /**
    * Get all photos for a specific album
    */
-  getAllPhotosForAlbum () {
+  getAllPhotosForAlbum() {
     this.app.get('/albums/:albumId/photos', /*this.authenticateToken,*/ (req, res) => {  // Comment out authenticateToken
       try {
-        this.PhotoModel.find({ albumId: req.params.albumId }).then((photos) => {
+        this.PhotoModel.find({ album: req.params.albumId }).then((photos) => {
           res.status(200).json(photos || []);
         }).catch(() => {
           res.status(500).json({
@@ -115,13 +115,58 @@ const Photos = class Photos {
   }
 
   /**
+   * Show a photo by id within a specific album
+   */
+  showPhotoByIdInAlbum() {
+    this.app.get('/albums/:albumId/photos/:photoId', /*this.authenticateToken,*/ (req, res) => {
+      const { albumId, photoId } = req.params;
+
+      try {
+        this.PhotoModel.findById(photoId)
+          .populate('album')  // Populate the album reference
+          .then((photo) => {
+            if (!photo) {
+              return res.status(404).json({
+                code: 404,
+                message: 'Photo not found'
+              });
+            }
+
+            // Check if the photo belongs to the specified album
+            if (photo.album._id.toString() !== albumId) {
+              return res.status(404).json({
+                code: 404,
+                message: 'Photo does not belong to this album'
+              });
+            }
+
+            res.status(200).json(photo);
+          })
+          .catch(() => {
+            res.status(500).json({
+              code: 500,
+              message: 'Internal Server error'
+            });
+          });
+      } catch (err) {
+        console.error(`[ERROR] albums/:albumId/photos/:photoId -> ${err}`);
+
+        res.status(400).json({
+          code: 400,
+          message: 'Bad request'
+        });
+      }
+    });
+  }
+
+  /**
    * Update a photo by id within a specific album
    */
-  updatePhotoInAlbum () {
+  updatePhotoInAlbum() {
     this.app.put('/albums/:albumId/photos/:photoId', /*this.authenticateToken,*/ (req, res) => {  // Comment out authenticateToken
       try {
         this.PhotoModel.findOneAndUpdate(
-          { _id: req.params.photoId, albumId: req.params.albumId },
+          { _id: req.params.photoId, album: req.params.albumId },
           req.body,
           { new: true }
         ).then((photo) => {
@@ -146,11 +191,12 @@ const Photos = class Photos {
   /**
    * Run
    */
-  run () {
+  run() {
     this.create();
     this.showById();
     this.deleteById();
     this.getAllPhotosForAlbum();
+    this.showPhotoByIdInAlbum();  // Register the new route
     this.updatePhotoInAlbum();
   }
 }
