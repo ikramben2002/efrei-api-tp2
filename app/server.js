@@ -72,6 +72,8 @@ module.exports = class Server {
   routes () {
     new routes.Users(this.app, this.connect, this.authenticateToken)
     new routes.Auth(this.app)
+    new routes.Albums(this.app, this.connect/*, this.authenticateToken*/)
+    new routes.Photos(this.app, this.connect/*, this.authenticateToken*/)
 
     // If route not exist
     this.app.use((req, res) => {
@@ -103,6 +105,11 @@ module.exports = class Server {
       next()
     })
   }
+
+  
+    
+    
+   
 
   /**
    * Run

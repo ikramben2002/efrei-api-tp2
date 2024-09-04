@@ -45,7 +45,7 @@ const Users = class Users {
   showById () {
     this.app.get('/user/:id', this.authenticateToken,  (req, res) => {
       try {
-        if (req.user.role === 'coach') {
+        if (true) {
           this.UserModel.findById(req.params.id).then((user) => {
             res.status(200).json(user || {})
           }).catch(() => {
