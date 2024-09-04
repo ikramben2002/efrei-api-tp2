@@ -359,37 +359,6 @@ Delete a photo from a specific album by its ID.
 
 When creating a photo, ensure it is linked to the appropriate album by updating the album's list of photos. Similarly, when deleting a photo, remove it from the album's list of photos. Utilize Mongoose's `populate` API (version 6+) to manage these relationships effectively.
 
-### Example Using `populate`
-To retrieve an album with all its photos:
-```javascript
-// controllers/albums.js
-const AlbumModel = require('../models/album.js');
-
-const Albums = class Albums {
-  // Other methods...
-
-  showById() {
-    this.app.get('/albums/:id', async (req, res) => {
-      try {
-        const album = await this.AlbumModel.findById(req.params.id).populate('photos').exec();
-
-        if (!album) {
-          return res.status(404).json({ code: 404, message: 'Album not found' });
-        }
-
-        res.status(200).json(album);
-      } catch (err) {
-        console.error(`[ERROR] albums/showById -> ${err}`);
-        res.status(400).json({ code: 400, message: 'Bad request' });
-      }
-    });
-  }
-
-  // Other methods...
-};
-
-module.exports = Albums;
-```
 
 ## Requirements
 * Node.js 16
