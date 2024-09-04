@@ -1,15 +1,13 @@
----
-
 # API Documentation
 
 ## Overview
-This API provides endpoints for managing users, albums, and photos using Express.js and Mongoose. It follows a RESTful architecture to allow CRUD (Create, Read, Update, Delete) operations on users, albums, and photos.
 
----
+This API provides endpoints for managing users, albums, and photos using Express.js and Mongoose. It follows a RESTful architecture to allow CRUD (Create, Read, Update, Delete) operations on users, albums, and photos.
 
 ## API Users
 
-### [POST] Create User
+### [POST] Create user
+
 Allows the creation of a single user.
 
 |                            |                  |
@@ -18,9 +16,9 @@ Allows the creation of a single user.
 | Who can use it ?           | Owner and users  |
 | Response formats           | application/json |
 
-* HTTP request : POST → `/user/create`
+* HTTP request: `POST /user/create`
 
-#### Parameters :
+#### Parameters:
 ```javascript
 {
   'firstname': String, // Optional
@@ -30,7 +28,7 @@ Allows the creation of a single user.
 }
 ```
 
-#### Response :
+#### Response:
 ```javascript
 {
   _id: Object_ID,
@@ -41,8 +39,9 @@ Allows the creation of a single user.
 }
 ```
 
-### [GET] Show User
-Show a user by ID.
+### [GET] Show user
+
+Shows a user by ID.
 
 |                            |                  |
 |----------------------------|------------------|
@@ -50,16 +49,16 @@ Show a user by ID.
 | Who can use it ?           | Owner and users  |
 | Response formats           | application/json |
 
-* HTTP request : GET → `/user/show/:id`
+* HTTP request: `GET /user/show/:id`
 
-#### Parameters :
+#### Parameters:
 ```javascript
 {
   id: String // Required
 }
 ```
 
-#### Response :
+#### Response:
 ```javascript
 {
   _id: Object_ID,
@@ -69,13 +68,12 @@ Show a user by ID.
   city: String
 }
 ```
-
----
 
 ## API Albums
 
-### [GET] List All Albums
-Retrieve the list of all albums.
+### [POST] Create album
+
+Allows the creation of a single album.
 
 |                            |                  |
 |----------------------------|------------------|
@@ -83,79 +81,30 @@ Retrieve the list of all albums.
 | Who can use it ?           | Owner and users  |
 | Response formats           | application/json |
 
-* HTTP request : GET → `/albums`
+* HTTP request: `POST /album`
 
-#### Response :
-```javascript
-[
-  {
-    _id: Object_ID,
-    title: String,
-    description: String,
-    photos: [Object_ID] // Array of photo IDs
-  }
-]
-```
-
-### [GET] Retrieve Album by ID
-Retrieve a specific album by its ID.
-
-|                            |                  |
-|----------------------------|------------------|
-| Requires authentication ?  | No               |
-| Who can use it ?           | Owner and users  |
-| Response formats           | application/json |
-
-* HTTP request : GET → `/albums/:id`
-
-#### Parameters :
-```javascript
-{
-  id: String // Required
-}
-```
-
-#### Response :
-```javascript
-{
-  _id: Object_ID,
-  title: String,
-  description: String,
-  photos: [Object_ID] // Array of photo IDs
-}
-```
-
-### [POST] Create a New Album
-Create a new album.
-
-|                            |                  |
-|----------------------------|------------------|
-| Requires authentication ?  | No               |
-| Who can use it ?           | Owner and users  |
-| Response formats           | application/json |
-
-* HTTP request : POST → `/albums`
-
-#### Parameters :
+#### Parameters:
 ```javascript
 {
   'title': String, // Required
-  'description': String // Optional
+  'description': String, // Optional
+  'photos': [Object_ID] // Optional, Array of Photo IDs
 }
 ```
 
-#### Response :
+#### Response:
 ```javascript
 {
-  _id: Object_ID,
+  id: Object_ID,
   title: String,
   description: String,
-  photos: [] // Initially empty array
+  photos: [Object_ID]
 }
 ```
 
-### [PUT] Update an Existing Album
-Update an album by its ID.
+### [GET] Show album by ID
+
+Retrieve an album by its ID.
 
 |                            |                  |
 |----------------------------|------------------|
@@ -163,114 +112,28 @@ Update an album by its ID.
 | Who can use it ?           | Owner and users  |
 | Response formats           | application/json |
 
-* HTTP request : PUT → `/albums/:id`
+* HTTP request: `GET /album/:id`
 
-#### Parameters :
+#### Parameters:
 ```javascript
 {
-  'title': String, // Optional
-  'description': String // Optional
-}
-```
-
-#### Response :
-```javascript
-{
-  _id: Object_ID,
-  title: String,
-  description: String,
-  photos: [Object_ID] // Updated array of photo IDs
-}
-```
-
-### [DELETE] Delete an Album
-Delete an album by its ID.
-
-|                            |                  |
-|----------------------------|------------------|
-| Requires authentication ?  | No               |
-| Who can use it ?           | Owner and users  |
-| Response formats           | application/json |
-
-* HTTP request : DELETE → `/albums/:id`
-
-#### Response :
-```javascript
-{
-  _id: Object_ID,
-  title: String,
-  description: String,
-  photos: [Object_ID] // Array of photo IDs (should be empty if deleted)
-}
-```
-
----
-
-## API Photos
-
-### [GET] List All Photos in an Album
-Retrieve all photos within a specific album.
-
-|                            |                  |
-|----------------------------|------------------|
-| Requires authentication ?  | No               |
-| Who can use it ?           | Owner and users  |
-| Response formats           | application/json |
-
-* HTTP request : GET → `/albums/:albumId/photos`
-
-#### Parameters :
-```javascript
-{
-  albumId: String // Required
-}
-```
-
-#### Response :
-```javascript
-[
-  {
-    _id: Object_ID,
-    title: String,
-    url: String,
-    description: String,
-    album: Object_ID // Album ID
-  }
-]
-```
-
-### [GET] Retrieve Photo by ID
-Retrieve a specific photo within an album by its ID.
-
-|                            |                  |
-|----------------------------|------------------|
-| Requires authentication ?  | No               |
-| Who can use it ?           | Owner and users  |
-| Response formats           | application/json |
-
-* HTTP request : GET → `/albums/:albumId/photos/:id`
-
-#### Parameters :
-```javascript
-{
-  albumId: String, // Required
   id: String // Required
 }
 ```
 
-#### Response :
+#### Response:
 ```javascript
 {
-  _id: Object_ID,
+  id: Object_ID,
   title: String,
-  url: String,
   description: String,
-  album: Object_ID // Album ID
+  photos: [Object_ID]
 }
 ```
 
-### [POST] Add a New Photo to an Album
-Add a new photo to a specific album.
+### [GET] List all albums
+
+Retrieve a list of all albums.
 
 |                            |                  |
 |----------------------------|------------------|
@@ -278,30 +141,119 @@ Add a new photo to a specific album.
 | Who can use it ?           | Owner and users  |
 | Response formats           | application/json |
 
-* HTTP request : POST → `/albums/:albumId/photos`
+* HTTP request: `GET /albums`
 
-#### Parameters :
+#### Response:
+```javascript
+[
+  {
+    id: Object_ID,
+    title: String,
+    description: String,
+    photos: [Object_ID]
+  },
+  // More albums...
+]
+```
+
+### [PUT] Update album
+
+Update an existing album by ID.
+
+|                            |                  |
+|----------------------------|------------------|
+| Requires authentication ?  | No               |
+| Who can use it ?           | Owner and users  |
+| Response formats           | application/json |
+
+* HTTP request: `PUT /album/:id`
+
+#### Parameters:
+```javascript
+{
+  'title': String, // Optional
+  'description': String, // Optional
+  'photos': [Object_ID] // Optional, Array of Photo IDs
+}
+```
+
+#### Response:
+```javascript
+{
+  id: Object_ID,
+  title: String,
+  description: String,
+  photos: [Object_ID]
+}
+```
+
+### [DELETE] Delete album
+
+Delete an album by ID.
+
+|                            |                  |
+|----------------------------|------------------|
+| Requires authentication ?  | No               |
+| Who can use it ?           | Owner and users  |
+| Response formats           | application/json |
+
+* HTTP request: `DELETE /album/:id`
+
+#### Parameters:
+```javascript
+{
+  id: String // Required
+}
+```
+
+#### Response:
+```javascript
+{
+  id: Object_ID,
+  title: String,
+  description: String,
+  photos: [Object_ID]
+}
+```
+
+## API Photos
+
+### [POST] Create photo
+
+Allows the creation of a single photo within an album.
+
+|                            |                  |
+|----------------------------|------------------|
+| Requires authentication ?  | No               |
+| Who can use it ?           | Owner and users  |
+| Response formats           | application/json |
+
+* HTTP request: `POST /album/:albumId/photo`
+
+#### Parameters:
 ```javascript
 {
   'title': String, // Required
   'url': String, // Required
-  'description': String // Optional
+  'description': String, // Optional
+  'album': Object_ID // Required, Album ID
 }
 ```
 
-#### Response :
+#### Response:
 ```javascript
 {
-  _id: Object_ID,
+  id: Object_ID,
   title: String,
   url: String,
   description: String,
-  album: Object_ID // Album ID
+  album: Object_ID
 }
 ```
 
-### [PUT] Update an Existing Photo
-Update a photo within a specific album by its ID.
+### [GET] Show photo by ID
+
+Retrieve a photo by its ID.
 
 |                            |                  |
 |----------------------------|------------------|
@@ -309,30 +261,88 @@ Update a photo within a specific album by its ID.
 | Who can use it ?           | Owner and users  |
 | Response formats           | application/json |
 
-* HTTP request : PUT → `/albums/:albumId/photos/:id`
+* HTTP request: `GET /photo/:id`
 
-#### Parameters :
+#### Parameters:
+```javascript
+{
+  id: String // Required
+}
+```
+
+#### Response:
+```javascript
+{
+  id: Object_ID,
+  title: String,
+  url: String,
+  description: String,
+  album: Object_ID
+}
+```
+
+### [GET] List all photos in an album
+
+Retrieve a list of all photos within a specific album.
+
+|                            |                  |
+|----------------------------|------------------|
+| Requires authentication ?  | No               |
+| Who can use it ?           | Owner and users  |
+| Response formats           | application/json |
+
+* HTTP request: `GET /album/:albumId/photos`
+
+#### Response:
+```javascript
+[
+  {
+    id: Object_ID,
+    title: String,
+    url: String,
+    description: String,
+    album: Object_ID
+  },
+  // More photos...
+]
+```
+
+### [PUT] Update photo
+
+Update an existing photo by ID.
+
+|                            |                  |
+|----------------------------|------------------|
+| Requires authentication ?  | No               |
+| Who can use it ?           | Owner and users  |
+| Response formats           | application/json |
+
+* HTTP request: `PUT /photo/:id`
+
+#### Parameters:
 ```javascript
 {
   'title': String, // Optional
   'url': String, // Optional
-  'description': String // Optional
+  'description': String, // Optional
+  'album': Object_ID // Optional, Album ID
 }
 ```
 
-#### Response :
+#### Response:
 ```javascript
 {
-  _id: Object_ID,
+  id: Object_ID,
   title: String,
   url: String,
   description: String,
-  album: Object_ID // Album ID
+  album: Object_ID
 }
 ```
 
-### [DELETE] Delete a Photo from an Album
-Delete a photo from a specific album by its ID.
+### [DELETE] Delete photo
+
+Delete a photo by ID.
 
 |                            |                  |
 |----------------------------|------------------|
@@ -340,45 +350,47 @@ Delete a photo from a specific album by its ID.
 | Who can use it ?           | Owner and users  |
 | Response formats           | application/json |
 
-* HTTP request : DELETE → `/albums/:albumId/photos/:id`
+* HTTP request: `DELETE /photo/:id`
 
-#### Response :
+#### Parameters:
 ```javascript
 {
-  _id: Object_ID,
-  title: String,
-  url: String,
-  description: String,
-  album: Object_ID // Album ID
+  id: String // Required
 }
 ```
 
----
-
-## Handling Relationships between Albums and Photos
-
-When creating a photo, ensure it is linked to the appropriate album by updating the album's list of photos. Similarly, when deleting a photo, remove it from the album's list of photos. Utilize Mongoose's `populate` API (version 6+) to manage these relationships effectively.
-
+#### Response:
+```javascript
+{
+  id: Object_ID,
+  title: String,
+  url: String,
+  description: String,
+  album: Object_ID
+}
+```
 
 ## Requirements
+
 * Node.js 16
 * npm or yarn
 * Git
-* MongoDB (please configure `config.js` for MongoDB connection)
+* MongoDB (please configure `config.js` to link MongoDB)
 
 ## Install
+
 ```bash
 yarn install
 ```
 
-## Production Mode
+## Production mode
+
 ```bash
 yarn prod
 ```
 
-## Development Mode
+## Dev mode
+
 ```bash
 yarn dev
 ```
-
----
